@@ -1,29 +1,69 @@
-# Create T3 App
+# Aplikasi Kasir Sederhana - Next.js & tRPC (Simple POS Next.js)
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Selamat datang di repositori proyek Aplikasi Kasir Sederhana! Proyek ini dibangun sebagai bagian dari pembelajaran intensif untuk menguasai pembuatan aplikasi web modern dengan Next.js, tRPC, Clerk untuk autentikasi, dan Supabase sebagai backend (database dan storage), serta Xendit untuk pemrosesan pembayaran.
 
-## What's next? How do I make an app with this?
+Tujuan utama proyek ini adalah untuk mempraktikkan dan mendemonstrasikan kemampuan dalam membangun aplikasi full-stack dengan fitur-fitur esensial sebuah sistem Point of Sale (POS).
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## 🌟 Fitur Utama (Progress Saat Ini)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- Setup proyek dengan Next.js (Pages Router), TypeScript, dan tRPC.
+- Autentikasi pengguna menggunakan Clerk.
+- Manajemen Kategori Produk (CRUD).
+- Manajemen Produk (Create & Read, dengan upload gambar).
+- Upload gambar menggunakan **Pre-signed URLs** dari Supabase Storage.
+- Fungsi **"Tambah ke Keranjang" (Add to Cart)** menggunakan state management Zustand.
+- Proses **Pembuatan Order (Create Order)**.
+- Integrasi Pembayaran: **Generate QRIS** menggunakan Xendit.
+- _Penanganan Webhook Pembayaran Xendit sedang dikerjakan (memerlukan Ngrok/localtunnel untuk testing lokal)._
+- _Update & Delete Produk, Filter Produk, dan Dashboard akan dikembangkan selanjutnya._
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## 🛠️ Teknologi Utama
 
-## Learn More
+- **Frontend:** Next.js, React, TypeScript, Tailwind CSS, Shadcn/UI, Zustand (State Management)
+- **Backend & API:** tRPC, Prisma
+- **Layanan Eksternal:**
+  - Clerk (Autentikasi)
+  - Supabase (Database PostgreSQL & Storage)
+  - Xendit (Pemrosesan Pembayaran)
+- **Lainnya:** Ngrok (untuk Webhook), ESLint, Prettier
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## 🚀 Cara Menjalankan Proyek
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+Untuk menjalankan proyek ini di komputer lokal Anda, ikuti langkah-langkah berikut:
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### 1. Persiapan Awal
 
-## How do I deploy this?
+- Pastikan Anda sudah menginstal [Node.js](https://nodejs.org/) (versi LTS direkomendasikan) dan npm/yarn.
+- Clone repositori ini:
+  ```bash
+  git clone https://github.com/stofere/simple-post-nextjs.git
+  cd FILE-REPO-YANG-TELAH-ANDA-CLONE
+  ```
+- Install semua dependency proyek:
+  ```bash
+  npm install
+  ```
+  _(atau `yarn install` jika Anda menggunakan Yarn)_
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### 2. Konfigurasi Environment Variables (.env)
+
+Proyek ini membutuhkan beberapa kredensial API yang disimpan dalam file `.env`.
+
+1.  Salin file `.env.example` menjadi `.env`:
+    ```bash
+    cp .env.example .env
+    ```
+2.  Isi variabel di `.env` dengan kredensial Anda:
+    - **Clerk:** `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` & `CLERK_SECRET_KEY`.
+    - **Supabase Database (Prisma):** `DATABASE_URL` (connection pooler URI) & `DIRECT_URL` (direct connection URI). Ganti `[YOUR-PASSWORD]` jika perlu.
+    - **Supabase JS Client:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, & `SUPABASE_ROLE_KEY` (service_role key - **RAHASIAKAN INI!**).
+    - **Xendit:** `XENDIT_MONEY_IN_KEY` (API Key untuk "Money In" dari dashboard Xendit Anda).
+    - **Supabase Storage:** Buat bucket publik bernama `product-images` (atau sesuai `src/server/bucket.ts`) di dashboard Supabase Storage.
+
+### 3. Sinkronisasi Database
+
+Setelah `.env` dikonfigurasi, jalankan:
+
+```bash
+npm run db:push
+```

@@ -1,33 +1,38 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-// ROUTER CATEGORY UTAMA
+// Query untuk fetching data
+// Mutation untuk Creating, Updating, Deleting data
+
 export const categoryRouter = createTRPCRouter({
-  // QUERY: Ambil Semua Kategori
   getCategories: protectedProcedure.query(async ({ ctx }) => {
+    // Fungsi in adalah asynchronos
     const { db } = ctx;
 
+    // Program akan "menunggu" disini sampai data kategori selesai diambil dari database
     const categories = await db.category.findMany({
       select: {
         id: true,
         name: true,
         productCount: true,
       },
+      orderBy: {
+        // Opsional: urutkan berdasarkan nama atau tanggal dibuat
+        createdAt: "desc",
+      },
     });
 
-    return categories;
+    return categories; // Setelah data didapat, baru dikembalikan
   }),
 
-  // MUTATION: Buat Kategori Baru
   createCategory: protectedProcedure
     .input(
       z.object({
-        name: z.string().min(3, "Minimum 3 characters required"),
+        name: z.string().min(3, "Minimum of 3 characters"),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-
       const newCategory = await db.category.create({
         data: {
           name: input.name,
@@ -38,10 +43,10 @@ export const categoryRouter = createTRPCRouter({
           productCount: true,
         },
       });
+
       return newCategory;
     }),
 
-  // MUTATION: Hapus Kategori Berdasarkan ID
   deleteCategoryById: protectedProcedure
     .input(
       z.object({
@@ -50,7 +55,6 @@ export const categoryRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
-
       await db.category.delete({
         where: {
           id: input.categoryId,
@@ -58,18 +62,17 @@ export const categoryRouter = createTRPCRouter({
       });
     }),
 
-  // MUTATION: Edit Kategori Berdasarkan ID
   editCategory: protectedProcedure
     .input(
       z.object({
         categoryId: z.string(),
-        name: z.string().min(3, "Minimum 3 characters required"),
+        name: z.string().min(3, "Minimum of 3 character"),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { db } = ctx;
 
-      const updatedCategory = await db.category.update({
+      await db.category.update({
         where: {
           id: input.categoryId,
         },
@@ -77,6 +80,5 @@ export const categoryRouter = createTRPCRouter({
           name: input.name,
         },
       });
-      return updatedCategory;
     }),
 });

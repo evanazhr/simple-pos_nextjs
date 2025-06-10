@@ -17,11 +17,12 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
 };
 
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req } = opts;
+  const { req } = opts; // `req` adalah objek request dari Next.js
 
-  const session = getAuth(req);
+  const session = getAuth(req); // Mendapatkan info sesi Clerk
 
   return createInnerTRPCContext({
+    // Membuat context dengan session dan db
     session,
   });
 };
@@ -44,8 +45,10 @@ export const createCallerFactory = t.createCallerFactory;
 
 export const createTRPCRouter = t.router;
 
+// protectedProcedure adalah sebuah Guard/Proteksi
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.session.userId) {
+    // <-- Memeriksa userId dari contex
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
